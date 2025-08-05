@@ -16,11 +16,22 @@ class _SearchPageState extends State<SearchPage> with SingleTickerProviderStateM
   String _query = '';
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
+  final TextEditingController _textController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
+  List<Article> _suggestions = [];
 
   @override
   void initState() {
     super.initState();
     _loadArticles();
+
+    _textController.addListener(() {
+      final value = _textController.text;
+      setState(() => _query = value);
+      if (_focusNode.hasFocus) {
+        _updateSuggestions(value);
+      }
+    });
 
     _controller = AnimationController(
       vsync: this,
@@ -33,6 +44,8 @@ class _SearchPageState extends State<SearchPage> with SingleTickerProviderStateM
   @override
   void dispose() {
     _controller.dispose();
+    _textController.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -42,6 +55,24 @@ class _SearchPageState extends State<SearchPage> with SingleTickerProviderStateM
     setState(() {
       _articles = list.map((e) => Article.fromJson(e)).toList();
     });
+  }
+
+  Future<void> _updateSuggestions(String input) async {
+    if (input.isEmpty) {
+      setState(() => _suggestions = []);
+      return;
+    }
+    final suggestions = await Future<List<Article>>(() {
+      return _articles
+          .where((a) =>
+              a.id.toLowerCase().contains(input.toLowerCase()) ||
+              a.texte.toLowerCase().contains(input.toLowerCase()))
+          .take(5)
+          .toList();
+    });
+    if (mounted) {
+      setState(() => _suggestions = suggestions);
+    }
   }
 
   @override
@@ -79,15 +110,58 @@ class _SearchPageState extends State<SearchPage> with SingleTickerProviderStateM
                     ),
                   ],
                 ),
-                child: TextField(
-                  style: GoogleFonts.poppins(color: Colors.white),
-                  decoration: InputDecoration(
-                    hintText: '🔍 Rechercher un article...',
-                    hintStyle: GoogleFonts.poppins(color: Colors.white70),
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                  ),
-                  onChanged: (value) => setState(() => _query = value),
+                child: RawAutocomplete<Article>(
+                  textEditingController: _textController,
+                  focusNode: _focusNode,
+                  optionsBuilder: (TextEditingValue textEditingValue) {
+                    return _suggestions;
+                  },
+                  displayStringForOption: (Article option) => option.id,
+                  onSelected: (Article selection) {
+                    FocusScope.of(context).unfocus();
+                    setState(() {
+                      _query = selection.id;
+                      _suggestions = [];
+                    });
+                  },
+                  fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
+                    return TextField(
+                      controller: controller,
+                      focusNode: focusNode,
+                      style: GoogleFonts.poppins(color: Colors.white),
+                      decoration: InputDecoration(
+                        hintText: '🔍 Rechercher un article...',
+                        hintStyle: GoogleFonts.poppins(color: Colors.white70),
+                        border: InputBorder.none,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                      ),
+                    );
+                  },
+                  optionsViewBuilder: (context, onSelected, options) {
+                    return Align(
+                      alignment: Alignment.topLeft,
+                      child: Material(
+                        color: Colors.white,
+                        elevation: 4.0,
+                        borderRadius: BorderRadius.circular(8),
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxHeight: 240),
+                          child: ListView.builder(
+                            padding: EdgeInsets.zero,
+                            itemCount: options.length,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              final Article option = options.elementAt(index);
+                              return ListTile(
+                                title: Text(option.id),
+                                onTap: () => onSelected(option),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
