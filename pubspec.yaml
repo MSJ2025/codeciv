@@ -63,6 +63,7 @@ flutter:
 assets:
    - assets/pic.png
    - assets/articles.json # Texte consolidé 2025
+   - assets/quiz_questions.json
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
