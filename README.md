@@ -1,16 +1,21 @@
 # codeciv
 
-A new Flutter project.
+Application de révision du Code civil écrite avec Flutter.
 
-## Getting Started
+## Fonctionnalités
 
-This project is a starting point for a Flutter application.
+- Recherche d'articles du Code civil.
+- Quiz rapide pour tester ses connaissances.
+## Démarrage
 
-A few resources to get you started if this is your first Flutter project:
+Ce projet utilise Flutter. Après avoir installé Flutter, exécutez :
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+```bash
+flutter run
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Pour lancer les tests :
+
+```bash
+flutter test
+```
