@@ -40,16 +40,21 @@ class _SearchPageState extends State<SearchPage> with SingleTickerProviderStateM
     final String data = await rootBundle.loadString('assets/articles.json');
     final List<dynamic> list = json.decode(data) as List<dynamic>;
     setState(() {
-      _articles = list.map((e) => Article.fromJson(e)).toList();
+      _articles =
+          list.map((e) => Article.fromJson(e as Map<String, dynamic>)).toList();
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final String q = _query.toLowerCase();
     final List<Article> results = _articles
         .where((a) =>
-            a.id.toLowerCase().contains(_query.toLowerCase()) ||
-            a.texte.toLowerCase().contains(_query.toLowerCase()))
+            a.id.toLowerCase().contains(q) ||
+            a.texte.toLowerCase().contains(q) ||
+            (a.livre?.toLowerCase().contains(q) ?? false) ||
+            (a.titre?.toLowerCase().contains(q) ?? false) ||
+            (a.chapitre?.toLowerCase().contains(q) ?? false))
         .toList();
 
     return Container(
