@@ -96,9 +96,11 @@ class _SearchPageState extends State<SearchPage> with SingleTickerProviderStateM
             end: Alignment.bottomRight,
           ),
         ),
-        child: SafeArea(
-          child: Column(
-            children: [
+      ),
+      child: SafeArea(
+        child: ListView(
+          children: [
+
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: AnimatedContainer(
@@ -170,66 +172,73 @@ class _SearchPageState extends State<SearchPage> with SingleTickerProviderStateM
                 ),
               ),
             ),
-            Expanded(
-              child: FadeTransition(
-                opacity: _fadeAnimation,
-                child: results.isEmpty && _query.isNotEmpty
-                    ? Center(
-                        child: Text(
-                          'Aucun article trouvé',
-                          style: GoogleFonts.poppins(fontSize: 18, color: Colors.white70),
-                        ),
-                      )
-                    : ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        itemCount: results.length,
-                        itemBuilder: (context, index) {
-                          final article = results[index];
-                          return AnimatedContainer(
-                            duration: const Duration(milliseconds: 400),
-                            margin: const EdgeInsets.symmetric(vertical: 8),
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [Color(0xFF4facfe), Color(0xFF00f2fe)],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              borderRadius: BorderRadius.circular(16),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.2),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
+            FadeTransition(
+              opacity: _fadeAnimation,
+              child: results.isEmpty && _query.isNotEmpty
+                  ? Center(
+                      child: Text(
+                        'Aucun article trouvé',
+                        style: GoogleFonts.poppins(fontSize: 18, color: Colors.white70),
+                      ),
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      itemCount: results.length,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        final article = results[index];
+                        return AnimatedContainer(
+                          duration: const Duration(milliseconds: 400),
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF4facfe), Color(0xFF00f2fe)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
                             ),
-                            child: ListTile(
-                              title: Text(
-                                article.numero,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
                               ),
-                              subtitle: Text(
-                                article.texte,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 14,
-                                  color: Colors.white70,
-                                ),
+                            ],
+                          ),
+                          child: ListTile(
+                            title: Text(
+                              article.numero,
+                              style: GoogleFonts.poppins(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
                               ),
-                              trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white),
-                              onTap: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Ouverture de ${article.numero}', style: GoogleFonts.poppins()),
-                                    backgroundColor: Colors.blueAccent,
-                                    duration: const Duration(seconds: 1),
-                                  ),
-                                );
-                              },
                             ),
+                            subtitle: Text(
+                              article.texte,
+                              style: GoogleFonts.poppins(
+                                fontSize: 14,
+                                color: Colors.white70,
+                              ),
+                            ),
+                            trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white),
+                            onTap: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Ouverture de ${article.numero}', style: GoogleFonts.poppins()),
+                                  backgroundColor: Colors.blueAccent,
+                                  duration: const Duration(seconds: 1),
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ],
+
                           );
                         },
                       ),
