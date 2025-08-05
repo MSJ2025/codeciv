@@ -87,17 +87,18 @@ class _SearchPageState extends State<SearchPage> with SingleTickerProviderStateM
             a.texte.toLowerCase().contains(q))
         .toList();
 
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF0f2027), Color(0xFF203a43), Color(0xFF2c5364)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+    return Scaffold(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF0f2027), Color(0xFF203a43), Color(0xFF2c5364)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
         ),
-      ),
-      child: SafeArea(
-        child: Column(
-          children: [
+        child: SafeArea(
+          child: Column(
+            children: [
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: AnimatedContainer(
@@ -232,9 +233,10 @@ class _SearchPageState extends State<SearchPage> with SingleTickerProviderStateM
                           );
                         },
                       ),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
