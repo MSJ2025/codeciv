@@ -50,7 +50,7 @@ class _SearchPageState extends State<SearchPage> with SingleTickerProviderStateM
   }
 
   Future<void> _loadArticles() async {
-    final String data = await rootBundle.loadString('assets/articles.json');
+    final String data = await rootBundle.loadString('assets/code_civil.json');
     final List<dynamic> list = json.decode(data) as List<dynamic>;
     setState(() {
       _articles =
@@ -66,7 +66,8 @@ class _SearchPageState extends State<SearchPage> with SingleTickerProviderStateM
     final suggestions = await Future<List<Article>>(() {
       return _articles
           .where((a) =>
-              a.id.toLowerCase().contains(input.toLowerCase()) ||
+              a.numero.toLowerCase().contains(input.toLowerCase()) ||
+              a.titre.toLowerCase().contains(input.toLowerCase()) ||
               a.texte.toLowerCase().contains(input.toLowerCase()))
           .take(5)
           .toList();
@@ -81,11 +82,9 @@ class _SearchPageState extends State<SearchPage> with SingleTickerProviderStateM
     final String q = _query.toLowerCase();
     final List<Article> results = _articles
         .where((a) =>
-            a.id.toLowerCase().contains(q) ||
-            a.texte.toLowerCase().contains(q) ||
-            (a.livre?.toLowerCase().contains(q) ?? false) ||
-            (a.titre?.toLowerCase().contains(q) ?? false) ||
-            (a.chapitre?.toLowerCase().contains(q) ?? false))
+            a.numero.toLowerCase().contains(q) ||
+            a.titre.toLowerCase().contains(q) ||
+            a.texte.toLowerCase().contains(q))
         .toList();
 
     return Container(
@@ -121,11 +120,11 @@ class _SearchPageState extends State<SearchPage> with SingleTickerProviderStateM
                   optionsBuilder: (TextEditingValue textEditingValue) {
                     return _suggestions;
                   },
-                  displayStringForOption: (Article option) => option.id,
+                  displayStringForOption: (Article option) => option.numero,
                   onSelected: (Article selection) {
                     FocusScope.of(context).unfocus();
                     setState(() {
-                      _query = selection.id;
+                      _query = selection.numero;
                       _suggestions = [];
                     });
                   },
@@ -158,7 +157,7 @@ class _SearchPageState extends State<SearchPage> with SingleTickerProviderStateM
                             itemBuilder: (context, index) {
                               final Article option = options.elementAt(index);
                               return ListTile(
-                                title: Text(option.id),
+                                title: Text(option.numero),
                                 onTap: () => onSelected(option),
                               );
                             },
@@ -205,7 +204,7 @@ class _SearchPageState extends State<SearchPage> with SingleTickerProviderStateM
                             ),
                             child: ListTile(
                               title: Text(
-                                article.id,
+                                article.numero,
                                 style: GoogleFonts.poppins(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -223,7 +222,7 @@ class _SearchPageState extends State<SearchPage> with SingleTickerProviderStateM
                               onTap: () {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text('Ouverture de ${article.id}', style: GoogleFonts.poppins()),
+                                    content: Text('Ouverture de ${article.numero}', style: GoogleFonts.poppins()),
                                     backgroundColor: Colors.blueAccent,
                                     duration: const Duration(seconds: 1),
                                   ),
